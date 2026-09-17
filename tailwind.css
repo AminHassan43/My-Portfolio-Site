@@ -1,0 +1,413 @@
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .all-\[unset\] {
+    all: unset;
+  }
+  
+  /* Badge button fixes for proper focus alignment */
+  .badge-button {
+    box-sizing: border-box;
+    outline: none;
+  }
+  
+  .badge-button:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+}
+
+:root {
+  --animate-spin: spin 1s linear infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 1s var(--animation-delay, 0s) ease forwards;
+}
+
+.animate-fade-up {
+  animation: fade-up 1s var(--animation-delay, 0s) ease forwards;
+}
+
+.animate-marquee {
+  animation: marquee var(--duration) infinite linear;
+}
+
+.animate-marquee-vertical {
+  animation: marquee-vertical var(--duration) linear infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 8s infinite;
+}
+
+.animate-spin {
+  animation: var(--animate-spin);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes image-glow {
+  0% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.74, 0.25, 0.76, 1);
+  }
+
+  10% {
+    opacity: 0.7;
+    animation-timing-function: cubic-bezier(0.12, 0.01, 0.08, 0.99);
+  }
+
+  to {
+    opacity: 0.4;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  90%,
+  to {
+    background-position: calc(-100% - var(--shimmer-width)) 0;
+  }
+
+  30%,
+  60% {
+    background-position: calc(100% + var(--shimmer-width)) 0;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate(0);
+  }
+
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+  }
+}
+
+@keyframes marquee-vertical {
+  0% {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
+  }
+}
+
+@keyframes fast-pulse {
+  0% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0.1;
+  }
+}
+
+.animate-fast-pulse {
+  animation: fast-pulse 2s ease-in-out infinite;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+
+    --card: transparent;
+    --card-foreground: 222.2 47.4% 11.2%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 215 20.2% 65.1%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+
+    --muted: 223 47% 11%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+
+    --accent: 216 34% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --popover: 224 71% 4%;
+    --popover-foreground: 215 20.2% 65.1%;
+
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+
+    --card: transparent;
+    --card-foreground: 213 31% 91%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 1.2%;
+
+    --secondary: 222.2 47.4% 11.2%;
+    --secondary-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 216 34% 17%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    overflow-x: hidden;
+    cursor: none; /* Hide default cursor globally */
+  }
+  
+  html {
+    overflow-x: hidden;
+  }
+
+  /* Hide cursor on all interactive elements */
+  a, button, input, textarea, select, [role="button"], [tabindex], .cursor-pointer, [class*="cursor-"] {
+    cursor: none !important;
+  }
+  
+  /* Specifically target elements with cursor-pointer class */
+  .cursor-pointer {
+    cursor: none !important;
+  }
+}
+
+/* Mobile-specific styles - only apply on screens smaller than 768px */
+@media (max-width: 767px) {
+  /* Header background - make it stretch full width */
+  .header-bg {
+    height: 400px !important;
+  }
+  
+  /* Navigation bar - make it less squished */
+  .nav-container {
+    gap: 1rem !important;
+  }
+  
+  .nav-logo {
+    font-size: 1.5rem !important;
+  }
+  
+  .nav-links {
+    gap: 1rem !important;
+  }
+  
+  .nav-link {
+    font-size: 1rem !important;
+    padding: 0.5rem 1rem !important;
+  }
+  
+  /* Hero section - stack vertically */
+  .hero-container {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1.5rem !important;
+  }
+  
+  .hero-text-container {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+  
+  .hero-text {
+    font-size: 2.25rem !important;
+  }
+  
+  .social-icons {
+    gap: 1rem !important;
+  }
+  
+  .social-icon {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+  
+  /* Description text */
+  .description-text {
+    font-size: 1.125rem !important;
+  }
+  
+  /* Badge and company section */
+  .badge-company-container {
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+    align-items: flex-start !important;
+  }
+  
+  .badge {
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1.125rem !important;
+  }
+  
+  .company-logos {
+    gap: 1rem !important;
+  }
+  
+  .company-logo {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+  
+  /* Project cards - increase spacing */
+  .project-card {
+    padding: 1.5rem !important;
+  }
+  
+  .project-image {
+    height: 180px !important;
+  }
+  
+  .project-title {
+    font-size: 1.5rem !important;
+  }
+  
+  .project-meta {
+    font-size: 1rem !important;
+    gap: 0.75rem !important;
+  }
+  
+  /* Toronto Case Summit - center it */
+  .toronto-case-container {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  
+  /* Section badges - make them cover 90% width */
+  .section-badge-container {
+    width: 90% !important;
+    margin: 0 auto !important;
+  }
+  
+  .section-badge {
+    padding: 0.75rem 2rem !important;
+    font-size: 1.125rem !important;
+  }
+  
+  /* About section - stack vertically */
+  .about-container {
+    flex-direction: column !important;
+    gap: 2rem !important;
+    align-items: center !important;
+  }
+  
+  .about-image {
+    width: 300px !important;
+    height: 325px !important;
+  }
+  
+  .about-text-container {
+    width: 100% !important;
+    gap: 1.25rem !important;
+  }
+  
+  .about-title {
+    font-size: 1.25rem !important;
+  }
+  
+  .about-text {
+    font-size: 1rem !important;
+  }
+  
+  /* More work - stack 4 folders vertically */
+  .more-work-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+  
+  .more-work-item {
+    width: 100% !important;
+    max-width: 300px !important;
+    margin: 0 auto !important;
+  }
+  
+  .more-work-text {
+    font-size: 1rem !important;
+  }
+  
+  /* Footer - reduce button size */
+  .footer-container {
+    gap: 1.5rem !important;
+  }
+  
+  .footer-text {
+    font-size: 1.125rem !important;
+  }
+  
+  .footer-button {
+    padding: 0.75rem 2rem !important;
+    font-size: 1.5rem !important;
+  }
+  
+  .footer-links {
+    max-width: 300px !important;
+  }
+}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Placeholder Images</title>
+</head>
+<body>
+    <h1>Generating Placeholder Images...</h1>
+    <div id="status"></div>
+    
+    <script>
+        const projects = [
+            { name: 'masaajid', slides: 6 },
+            { name: 'lightbulb', slides: 5 },
+            { name: 'tcs', slides: 7 },
+            { name: 'lgh', slides: 5 }
+        ];
+        
+        const colors = [
+            ['#667eea', '#764ba2'],
+            ['#f093fb', '#f5576c'],
+            ['#4facfe', '#00f2fe'],
+            ['#43e97b', '#38f9d7'],
+            ['#fa709a', '#fee140'],
+            ['#a8edea', '#fed6e3'],
+            ['#ff9a9e', '#fecfef']
+        ];
+        
+        function createGradientCanvas(width, height, color1, color2) {
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            
+            const gradient = ctx.createLinearGradient(0, 0, width, height);
+            gradient.addColorStop(0, color1);
+            gradient.addColorStop(1, color2);
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Add text
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 48px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('Project Slide', width/2, height/2);
+            
+            return canvas;
+        }
+        
+        function downloadCanvas(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/jpeg', 0.9);
+            link.click();
+        }
+        
+        function generateAllImages() {
+            const status = document.getElementById('status');
+            let count = 0;
+            const total = projects.reduce((sum, project) => sum + project.slides, 0);
+            
+            projects.forEach((project, projectIndex) => {
+                for (let i = 1; i <= project.slides; i++) {
+                    const colorIndex = (i - 1) % colors.length;
+                    const canvas = createGradientCanvas(800, 600, colors[colorIndex][0], colors[colorIndex][1]);
+                    const filename = `/${project.name}-slide-${i}.jpg`;
+                    
+                    setTimeout(() => {
+                        downloadCanvas(canvas, filename);
+                        count++;
+                        status.innerHTML = `Generated ${count}/${total} images...`;
+                        
+                        if (count === total) {
+                            status.innerHTML = 'All images generated! Check your downloads folder.';
+                        }
+                    }, count * 100);
+                }
+            });
+        }
+        
+        // Start generation
+        generateAllImages();
+    </script>
+</body>
+</html>
