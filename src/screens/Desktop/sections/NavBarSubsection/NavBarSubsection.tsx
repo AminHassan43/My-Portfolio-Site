@@ -12,18 +12,22 @@ import { cn } from "../../../../lib/utils";
 const NAV_ITEMS = [
   { label: "home", target: "top" },
   { label: "work", target: "projects" },
-  { label: "about", target: "about" },
 ] as const;
 
 interface NavBarSubsectionProps {
   darkMode?: boolean;
+  variant?: "default" | "gallery";
 }
 
-export const NavBarSubsection = ({ darkMode = false }: NavBarSubsectionProps) => {
+export const NavBarSubsection = ({
+  darkMode = false,
+  variant = "default",
+}: NavBarSubsectionProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const navItems = variant === "gallery" ? NAV_ITEMS.slice(0, 1) : NAV_ITEMS;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 100);
@@ -81,21 +85,27 @@ export const NavBarSubsection = ({ darkMode = false }: NavBarSubsectionProps) =>
     )}>
       <div className="flex items-center justify-between w-full max-w-[1318px] mx-auto px-8 md:px-8 py-6">
         <div className={cn(
-          "nav-logo relative [font-family:'Bricolage_Grotesque',Helvetica] font-extrabold text-2xl md:text-[32px] tracking-[-1.28px] leading-[normal] whitespace-nowrap",
+          "nav-logo relative text-2xl md:text-[32px] leading-[normal] whitespace-nowrap",
+          variant === "gallery"
+            ? "[font-family:'Fraunces',Georgia,serif] font-normal tracking-[-0.8px]"
+            : "[font-family:'Bricolage_Grotesque',Helvetica] font-extrabold tracking-[-1.28px]",
           logoColor
         )}>
-          Amin Hassan
+          {variant === "gallery" ? "amin hassan" : "Amin Hassan"}
         </div>
 
         <div className="hidden md:block">
           <NavigationMenu>
             <NavigationMenuList className="nav-links flex items-center gap-[70px]">
-              {NAV_ITEMS.map(({ label, target }) => (
+              {navItems.map(({ label, target }) => (
                 <NavigationMenuItem key={label}>
                   <NavigationMenuLink
                     onClick={() => handleNavigation(target)}
                     className={cn(
-                      "nav-link relative [font-family:'Bricolage_Grotesque',Helvetica] font-light text-[32px] tracking-[-1.28px] leading-[normal] whitespace-nowrap hover:opacity-70 transition-all duration-300 cursor-pointer",
+                      "nav-link relative text-[32px] leading-[normal] whitespace-nowrap hover:opacity-70 transition-all duration-300 cursor-pointer",
+                      variant === "gallery"
+                        ? "[font-family:'Space_Mono',monospace] font-normal tracking-[-1.12px]"
+                        : "[font-family:'Bricolage_Grotesque',Helvetica] font-light tracking-[-1.28px]",
                       textColor
                     )}
                   >
@@ -122,12 +132,15 @@ export const NavBarSubsection = ({ darkMode = false }: NavBarSubsectionProps) =>
           darkMode ? "border-white/10" : "border-gray-100"
         )}>
           <div className="flex flex-col gap-8 items-center justify-center h-3/4">
-            {NAV_ITEMS.map(({ label, target }) => (
+            {navItems.map(({ label, target }) => (
               <button
                 key={label}
                 onClick={() => handleNavigation(target)}
                 className={cn(
-                  "[font-family:'Bricolage_Grotesque',Helvetica] font-light text-4xl tracking-[-1.28px] leading-[normal] hover:opacity-70 transition-all duration-300",
+                  "text-4xl leading-[normal] hover:opacity-70 transition-all duration-300",
+                  variant === "gallery"
+                    ? "[font-family:'Space_Mono',monospace] font-normal tracking-[-1.26px]"
+                    : "[font-family:'Bricolage_Grotesque',Helvetica] font-light tracking-[-1.28px]",
                   mobileMenuText
                 )}
               >

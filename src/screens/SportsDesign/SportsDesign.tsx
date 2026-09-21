@@ -189,7 +189,7 @@ const GlowCard = ({
           className="fixed top-0 left-0 pointer-events-none z-50 transition-opacity duration-200 opacity-0 will-change-transform"
         >
           <div 
-            className="px-4 py-2 rounded-full text-sm font-medium shadow-lg whitespace-nowrap [font-family:'Bricolage_Grotesque',Helvetica]"
+            className="px-4 py-2 rounded-full text-sm font-normal shadow-lg whitespace-nowrap [font-family:'Space_Mono',monospace]"
             style={{ backgroundColor: badgeColor, color: textColor }}
           >
             {badgeText}
@@ -206,19 +206,19 @@ export const SportsDesign = (): JSX.Element => {
   }, []);
 
   return (
-    <div className="bg-[#121212] w-full min-h-screen flex flex-col items-center relative">
+    <div className="bg-[#121212] w-full min-h-screen flex flex-col items-center relative [font-family:'Space_Mono',monospace]">
       <HalftoneHero />
       
-      <NavBarSubsection darkMode={true} />
+      <NavBarSubsection darkMode={true} variant="gallery" />
 
       <div className="relative z-10 w-full max-w-[1400px] px-6 md:px-12 pt-32 md:pt-48 pb-20 flex flex-col gap-20">
         
         {/* Hero Section */}
         <div className="flex flex-col gap-4 items-center text-center animate-fade-up relative">
-          <h1 className="[font-family:'Bricolage_Grotesque',Helvetica] font-bold text-5xl md:text-8xl tracking-tighter leading-[0.9] text-white">
+          <h1 className="font-bold text-5xl md:text-8xl tracking-tighter leading-[0.9] text-white">
             My Graphic Design Work
           </h1>
-          <p className="[font-family:'Bricolage_Grotesque',Helvetica] font-light text-xl md:text-2xl text-gray-400 max-w-2xl leading-tight">
+          <p className="font-normal text-xl md:text-2xl text-gray-400 max-w-2xl leading-tight">
             Made with Adobe Photoshop and Figma
           </p>
         </div>
@@ -244,7 +244,7 @@ export const SportsDesign = (): JSX.Element => {
 
       {/* Footer */}
       <footer className="w-full py-20 flex flex-col items-center justify-center gap-8 border-t border-white/10 mt-auto">
-        <div className="[font-family:'Bricolage_Grotesque',Helvetica] font-light text-xl md:text-2xl text-white tracking-tight">
+        <div className="font-normal text-xl md:text-2xl text-white tracking-tight">
             always creating art
         </div>
       </footer>

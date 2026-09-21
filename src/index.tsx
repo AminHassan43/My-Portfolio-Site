@@ -9,13 +9,32 @@ import { Photography } from "./screens/Photography";
 import { SportsDesign } from "./screens/SportsDesign";
 import { SmoothCursor } from "./components/SmoothCursor";
 
-// Component to scroll to top on route change
 const ScrollToTop = () => {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    let secondFrame: number | undefined;
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        if (!hash) {
+          window.scrollTo({ top: 0, behavior: "auto" });
+          return;
+        }
+
+        const target = document.getElementById(
+          decodeURIComponent(hash.slice(1)),
+        );
+        target?.scrollIntoView({ behavior: "auto", block: "start" });
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      if (secondFrame !== undefined) {
+        window.cancelAnimationFrame(secondFrame);
+      }
+    };
+  }, [pathname, hash]);
 
   return null;
 };

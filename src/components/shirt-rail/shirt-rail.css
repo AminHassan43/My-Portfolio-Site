@@ -1,0 +1,86 @@
+/* The Shirt Rail. Every rule is scoped to .shirt-rail so the rack can sit in
+   any page. The component fills its container and centres the rack in it. */
+.shirt-rail{--pitch:64px;--row-height:325px;--row-gap:22px;--edge-gutter:calc((100vw - 32px)/2 - var(--pitch)/2);position:relative;height:100%;min-height:672px;display:flex;flex-direction:column;justify-content:center;overflow:visible;background:transparent;color:#222624;font-family:Arial,Helvetica,sans-serif;font-synthesis:none}
+.shirt-rail,.shirt-rail *{box-sizing:border-box}
+.shirt-rail button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
+.shirt-rail button:focus-visible{outline:2px solid #353d39;outline-offset:5px}
+
+/* Rack */
+.shirt-rail .rack-room{position:relative;margin:0;height:calc(var(--row-height)*2 + var(--row-gap))}
+.shirt-rail .rack-strip{transition:opacity 420ms ease}
+.shirt-rail.is-loading .rack-strip,.shirt-rail.is-revealing .rack-strip{opacity:0;pointer-events:none}
+.shirt-rail.is-loaded .rack-strip,.shirt-rail.webgl-unavailable .rack-strip{opacity:1;pointer-events:auto}
+.shirt-rail .rack-loader{position:absolute;inset:0;z-index:5;display:grid;place-items:center;overflow:hidden;opacity:0;pointer-events:none;transition:opacity 420ms ease}
+.shirt-rail.is-loading .rack-loader,.shirt-rail.is-revealing .rack-loader{opacity:1}
+.shirt-rail.is-loaded .rack-loader{opacity:0;visibility:hidden;transition:opacity 420ms ease,visibility 0s 420ms}
+.shirt-rail.webgl-unavailable .rack-loader{opacity:1}
+/* max-width:none defeats the host page's image reset, which would otherwise
+   clamp the poster narrower than the rack canvas it stands in for. */
+.shirt-rail .rack-poster{position:absolute;max-width:none;opacity:0;pointer-events:none}
+.shirt-rail.is-loading .rack-poster{opacity:1}
+/* Without WebGL the poster is the rack: the buttons stay clickable over it. */
+.shirt-rail.webgl-unavailable .rack-loader-pattern{display:none}
+.shirt-rail.webgl-unavailable .rack-poster{opacity:1}
+.shirt-rail.webgl-unavailable .kit>.swing{visibility:hidden}
+.shirt-rail .rack-loader-pattern{display:none}
+.shirt-rail .rail{position:absolute;left:24px;right:24px;top:14px;height:6px;background:#9ca3a4;border-top:1px solid #c7cdce;border-bottom:1px solid #747c7d;z-index:0;mask-image:linear-gradient(to right,transparent,#000 72px,#000 calc(100% - 72px),transparent);-webkit-mask-image:linear-gradient(to right,transparent,#000 72px,#000 calc(100% - 72px),transparent)}
+.shirt-rail .rail i{position:absolute;width:10px;height:15px;top:-5px;left:-4px;background:#a3aaaa;border:1px solid #8d9696;border-radius:2px}
+.shirt-rail .rail i+i{left:auto;right:-4px}
+.shirt-rail.webgl-ready .rail{visibility:hidden}
+.shirt-rail .rack-strip{height:100%;width:100%;overflow-x:auto;overflow-y:visible;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;position:relative}
+.shirt-rail .rack-strip::-webkit-scrollbar{display:none}
+.shirt-rail .rack-track{position:relative;display:flex;width:max-content;height:100%;padding:0;flex-direction:column;gap:var(--row-gap)}
+.shirt-rail .rack-row{position:relative;display:flex;width:max-content;height:var(--row-height);padding-inline:var(--edge-gutter)}
+.shirt-rail .rack-row+.rack-row{margin-top:-72px}
+.shirt-rail .rack-canvas{position:absolute;top:0;pointer-events:none;z-index:1}
+.shirt-rail .slot{position:relative;z-index:2;flex:0 0 var(--pitch);width:var(--pitch);height:100%;scroll-snap-align:center}
+.shirt-rail .kit{position:absolute;left:0;top:0;width:var(--pitch);height:305px;padding:0;border:0;background:none;cursor:pointer;touch-action:pan-x;transform:translate3d(0,0,0);transform-origin:50% 16px}
+.shirt-rail .kit svg{position:absolute;left:0;top:0;width:124px;height:310px;overflow:visible;pointer-events:none}
+.shirt-rail .kit[aria-selected=true]{z-index:40}
+.shirt-rail .kit.is-lifted{opacity:.18}
+.shirt-rail .kit:focus-visible{outline-offset:2px;border-radius:2px}
+.shirt-rail .kit>.swing{display:block;position:absolute;left:calc(50% - 62px);top:0;width:124px;height:310px;transform-origin:62px 17.36px;pointer-events:none}
+.shirt-rail .hem{transform-origin:56px 130px}
+.shirt-rail .garment{display:block;position:absolute;inset:0}
+.shirt-rail .is-3d .kit>.swing{visibility:hidden}
+
+/* Detail dialog (rendered in the top layer, still styled through .shirt-rail) */
+.shirt-rail dialog{position:relative;margin:auto;width:calc(100% - 32px);max-width:680px;max-height:calc(100dvh - 32px);padding:0;overflow:auto;border:1px solid rgba(255,255,255,.55);border-radius:20px;background-color:rgba(255,255,255,.42);background-image:linear-gradient(160deg,rgba(255,255,255,.78) 0%,rgba(255,255,255,.58) 42%,rgba(244,246,255,.62) 100%);box-shadow:0 24px 70px rgba(18,18,18,.16),inset 0 1px 0 rgba(255,255,255,.85),inset 0 0 0 1px rgba(255,255,255,.28),inset 0 -18px 36px -22px rgba(120,130,160,.35);color:#121212;backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%)}
+.shirt-rail dialog::before{position:absolute;z-index:0;inset:0;background:radial-gradient(120% 80% at 6% -8%,rgba(255,255,255,.9) 0%,rgba(255,255,255,0) 58%);content:"";pointer-events:none}
+.shirt-rail dialog::backdrop{background:rgba(30,35,32,.43);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.shirt-rail .dialog-panel{position:relative;z-index:1;display:grid;grid-template-columns:1fr;min-height:0}
+.shirt-rail .close{position:absolute;z-index:10;top:12px;right:12px;width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:999px;background:rgba(255,255,255,.18);cursor:pointer!important;pointer-events:auto;isolation:isolate;transition:background-color 160ms ease,transform 160ms ease}
+.shirt-rail .close svg{width:23px;fill:none;stroke:currentColor;stroke-width:1.4}
+.shirt-rail dialog[open],.shirt-rail dialog[open] *{cursor:auto!important}
+.shirt-rail dialog[open] .close{cursor:pointer!important}
+.shirt-rail .dialog-logo-stage{display:grid;min-width:0;padding:62px 32px;place-items:center}
+.shirt-rail .dialog-logo{display:block;width:180px;max-width:100%;height:180px;object-fit:contain;object-position:center}
+.shirt-rail .dialog-logo[hidden],.shirt-rail .dialog-logo-fallback[hidden]{display:none}
+.shirt-rail .dialog-logo-fallback{display:grid;width:180px;max-width:100%;height:180px;place-items:center;color:#3f444c;font-family:"Fraunces",Georgia,serif;font-size:var(--type-header,40px);font-weight:400;letter-spacing:-.025em;text-align:center}
+.shirt-rail .dialog-copy{display:flex;min-width:0;padding:56px 52px 50px 16px;align-self:stretch;flex-direction:column;justify-content:center;font-family:"Space Mono",monospace}
+.shirt-rail .dialog-club{margin:0;font-family:"Fraunces",Georgia,serif;font-size:var(--type-header,40px);font-optical-sizing:auto;font-weight:400;letter-spacing:-.025em;line-height:1.05;overflow-wrap:anywhere}
+.shirt-rail .dialog-meta{display:grid;width:100%;margin:28px 0 0;padding:0}
+.shirt-rail .dialog-meta>div{display:grid;padding:15px 0;align-items:baseline;grid-template-columns:86px minmax(0,1fr);gap:18px;border-top:1px solid rgba(18,18,18,.13)}
+.shirt-rail .dialog-meta>div:last-child{border-bottom:1px solid rgba(18,18,18,.13)}
+.shirt-rail .dialog-meta dt{color:#5f646d;font-size:var(--type-detail,12px);font-weight:700;letter-spacing:.15em;text-transform:uppercase}
+.shirt-rail .dialog-meta dd{min-width:0;margin:0;font-size:var(--type-body,16px);font-weight:400;letter-spacing:-.035em;line-height:1.4;text-align:right;overflow-wrap:anywhere}
+
+@media(min-width:680px){
+  .shirt-rail{--pitch:min(calc((88vw - 124px) / var(--rack-cols,16)),52px);--row-height:335px;--row-gap:26px;--edge-gutter:62px}
+  .shirt-rail .rack-room{height:calc(var(--row-height)*2 + var(--row-gap))}
+  .shirt-rail .rack-strip{overflow:visible;scroll-snap-type:none}
+  .shirt-rail .rack-track{padding:0;margin:0 auto}
+  .shirt-rail .dialog-panel{grid-template-columns:280px minmax(0,1fr);min-height:390px}
+}
+@media(max-width:679px){
+  .shirt-rail dialog{width:calc(100% - 28px)}
+  .shirt-rail .dialog-logo-stage{padding:52px 52px 16px}
+  .shirt-rail .dialog-logo,.shirt-rail .dialog-logo-fallback{width:156px;height:156px}
+  .shirt-rail .dialog-copy{padding:16px 28px 34px;align-items:center;text-align:center}
+  .shirt-rail .dialog-meta{margin-top:24px;text-align:left}
+}
+@media(hover:hover){.shirt-rail .close:hover{background:rgba(255,255,255,.62);transform:scale(1.04)}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.shirt-rail dialog{background-color:rgba(255,255,255,.96)}}
+@media(prefers-reduced-transparency:reduce){.shirt-rail dialog{border-color:rgba(18,18,18,.13);background-color:#fff;background-image:none;box-shadow:0 24px 70px rgba(18,18,18,.16);backdrop-filter:none;-webkit-backdrop-filter:none}.shirt-rail dialog::before{display:none}.shirt-rail dialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}}
+@media(prefers-reduced-motion:reduce){.shirt-rail .kit,.shirt-rail .swing,.shirt-rail .hem{transition:transform 120ms ease,opacity 120ms ease}.shirt-rail .rack-loader-pattern{animation:none}.shirt-rail .rack-strip,.shirt-rail .rack-loader{transition:opacity 120ms linear}}
+@media(scripting:none){.shirt-rail.is-loading .rack-strip{opacity:1;pointer-events:auto}.shirt-rail .rack-loader{display:none}}

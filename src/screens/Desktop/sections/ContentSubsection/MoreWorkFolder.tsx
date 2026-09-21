@@ -231,7 +231,7 @@ export const MoreWorkFolder = ({ category }: MoreWorkFolderProps) => {
         </div>
       </div>
       <div className="inline-flex flex-col items-start gap-[3.08px] relative">
-        <div className="more-work-text relative self-stretch mt-[-0.62px] [font-family:'Bricolage_Grotesque',Helvetica] font-light text-black text-xl text-center tracking-[-0.80px] leading-[normal]">
+        <div className="more-work-text relative self-stretch mt-[-0.62px] [font-family:'Space_Mono',monospace] font-normal text-black text-[16px] text-center tracking-[-0.56px] leading-[1.4]">
           {category.name}
         </div>
       </div>

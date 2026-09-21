@@ -316,24 +316,6 @@
     height: 2rem !important;
   }
   
-  /* Project cards - increase spacing */
-  .project-card {
-    padding: 1.5rem !important;
-  }
-  
-  .project-image {
-    height: 180px !important;
-  }
-  
-  .project-title {
-    font-size: 1.5rem !important;
-  }
-  
-  .project-meta {
-    font-size: 1rem !important;
-    gap: 0.75rem !important;
-  }
-  
   /* Toronto Case Summit - center it */
   .toronto-case-container {
     display: flex !important;
@@ -352,35 +334,10 @@
     font-size: 1.125rem !important;
   }
   
-  /* About section - stack vertically */
-  .about-container {
-    flex-direction: column !important;
-    gap: 2rem !important;
-    align-items: center !important;
-  }
-  
-  .about-image {
-    width: 300px !important;
-    height: 325px !important;
-  }
-  
-  .about-text-container {
-    width: 100% !important;
-    gap: 1.25rem !important;
-  }
-  
-  .about-title {
-    font-size: 1.25rem !important;
-  }
-  
-  .about-text {
-    font-size: 1rem !important;
-  }
-  
   /* More work - stack 4 folders vertically */
   .more-work-grid {
     grid-template-columns: 1fr !important;
-    gap: 2rem !important;
+    gap: 4rem !important;
   }
   
   .more-work-item {
@@ -393,21 +350,4 @@
     font-size: 1rem !important;
   }
   
-  /* Footer - reduce button size */
-  .footer-container {
-    gap: 1.5rem !important;
-  }
-  
-  .footer-text {
-    font-size: 1.125rem !important;
-  }
-  
-  .footer-button {
-    padding: 0.75rem 2rem !important;
-    font-size: 1.5rem !important;
-  }
-  
-  .footer-links {
-    max-width: 300px !important;
-  }
 }

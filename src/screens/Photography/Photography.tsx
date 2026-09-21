@@ -171,19 +171,19 @@ export const Photography = (): JSX.Element => {
   }, []);
 
   return (
-    <div className="bg-[#121212] w-full min-h-screen flex flex-col items-center relative">
+    <div className="bg-[#121212] w-full min-h-screen flex flex-col items-center relative [font-family:'Space_Mono',monospace]">
       <HalftoneHero />
       
-      <NavBarSubsection darkMode={true} />
+      <NavBarSubsection darkMode={true} variant="gallery" />
 
       <div className="relative z-10 w-full max-w-[1400px] px-6 md:px-12 pt-32 md:pt-48 pb-20 flex flex-col gap-20">
         
         {/* Hero Section */}
         <div className="flex flex-col gap-4 items-center text-center animate-fade-up relative">
-          <h1 className="[font-family:'Bricolage_Grotesque',Helvetica] font-bold text-5xl md:text-8xl tracking-tighter leading-[0.9] text-white">
+          <h1 className="font-bold text-5xl md:text-8xl tracking-tighter leading-[0.9] text-white">
             Moments I've Captured
           </h1>
-          <p className="[font-family:'Bricolage_Grotesque',Helvetica] font-light text-xl md:text-2xl text-gray-400 max-w-2xl leading-tight">
+          <p className="font-normal text-xl md:text-2xl text-gray-400 max-w-2xl leading-tight">
             Shot on Sony A7III with a Tamron 70-200
           </p>
         </div>
@@ -204,7 +204,7 @@ export const Photography = (): JSX.Element => {
 
       {/* Footer */}
       <footer className="w-full py-20 flex flex-col items-center justify-center gap-8 border-t border-white/10 mt-auto">
-        <div className="[font-family:'Bricolage_Grotesque',Helvetica] font-light text-xl md:text-2xl text-white tracking-tight">
+        <div className="font-normal text-xl md:text-2xl text-white tracking-tight">
             still shooting more :)
         </div>
       </footer>

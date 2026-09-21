@@ -159,7 +159,7 @@ export const AboutImage = ({ images = [], src, alt }: AboutImageProps) => {
         className="fixed top-0 left-0 pointer-events-none z-50 transition-opacity duration-200 opacity-0 will-change-transform"
       >
         <div 
-          className="text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg whitespace-nowrap [font-family:'Bricolage_Grotesque',Helvetica] transition-colors duration-300"
+          className="text-white px-4 py-2 rounded-full text-[12px] font-medium shadow-lg whitespace-nowrap [font-family:'Bricolage_Grotesque',Helvetica] transition-colors duration-300"
           style={{ backgroundColor: currentImg.badge?.color || "#0e46a0" }}
         >
           {currentImg.badge?.text || "PSG 2024/25 Fourth Kit"}

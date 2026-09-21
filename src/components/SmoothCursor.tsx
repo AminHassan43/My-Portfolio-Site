@@ -7,8 +7,9 @@ interface SmoothCursorProps {
 export const SmoothCursor: React.FC<SmoothCursorProps> = ({ children }) => {
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
-  const [isHoveringMasaajid, setIsHoveringMasaajid] = useState(false);
-  const [isHoveringAbout, setIsHoveringAbout] = useState(false);
+  const [isHoveringConstruction, setIsHoveringConstruction] = useState(false);
+  const [isHoveringCustomCursor, setIsHoveringCustomCursor] = useState(false);
+  const [isShirtDialogOpen, setIsShirtDialogOpen] = useState(false);
   const targetPosition = useRef({ x: 0, y: 0 });
   const animationFrameRef = useRef<number>();
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -36,28 +37,31 @@ export const SmoothCursor: React.FC<SmoothCursorProps> = ({ children }) => {
       }
     };
 
-    // Handle hover events for special cards
+    const handleShirtRailDialogChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ open?: boolean }>;
+      setIsShirtDialogOpen(Boolean(customEvent.detail?.open));
+    };
+
+    // Hide the global cursor where a component supplies its own pointer badge.
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const masaajidCard = target.closest('[data-project="masaajid"]');
       const constructionTarget = target.closest('[data-cursor="under-construction"]');
-      const aboutImage = target.closest('[data-element="about-image"]');
+      const customCursorTarget = target.closest('[data-element="about-image"]');
       
-      setIsHoveringMasaajid(!!masaajidCard || !!constructionTarget);
-      setIsHoveringAbout(!!aboutImage);
+      setIsHoveringConstruction(!!constructionTarget);
+      setIsHoveringCustomCursor(!!customCursorTarget);
     };
 
     const handleMouseLeaveCard = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const masaajidCard = target.closest('[data-project="masaajid"]');
       const constructionTarget = target.closest('[data-cursor="under-construction"]');
-      const aboutImage = target.closest('[data-element="about-image"]');
+      const customCursorTarget = target.closest('[data-element="about-image"]');
       
-      if (!masaajidCard && !constructionTarget) {
-        setIsHoveringMasaajid(false);
+      if (!constructionTarget) {
+        setIsHoveringConstruction(false);
       }
-      if (!aboutImage) {
-        setIsHoveringAbout(false);
+      if (!customCursorTarget) {
+        setIsHoveringCustomCursor(false);
       }
     };
 
@@ -89,6 +93,7 @@ export const SmoothCursor: React.FC<SmoothCursorProps> = ({ children }) => {
     document.addEventListener('mouseout', handleMouseOut);
     document.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseleave', handleMouseLeaveCard);
+    document.addEventListener('shirt-rail-dialog-change', handleShirtRailDialogChange);
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
@@ -97,16 +102,14 @@ export const SmoothCursor: React.FC<SmoothCursorProps> = ({ children }) => {
       document.removeEventListener('mouseout', handleMouseOut);
       document.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseleave', handleMouseLeaveCard);
+      document.removeEventListener('shirt-rail-dialog-change', handleShirtRailDialogChange);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
   }, [isVisible]);
 
-  // Should hide cursor if hovering About image (since it has its own badge)
-  // Should show custom cursor for Masaajid
-  // Should show default crosshair otherwise
-  const shouldHideCursor = isHoveringAbout;
+  const shouldHideCursor = isHoveringCustomCursor || isShirtDialogOpen;
 
   if (shouldHideCursor) {
     return <>{children}</>;
@@ -115,10 +118,10 @@ export const SmoothCursor: React.FC<SmoothCursorProps> = ({ children }) => {
   return (
     <>
       {children}
-      {/* Global cursor - crosshair or red badge */}
+      {/* Global cursor: crosshair or construction badge */}
       <div
         ref={cursorRef}
-        className={`fixed pointer-events-none z-[9999] ${isHoveringMasaajid ? '' : 'mix-blend-difference'}`}
+        className={`fixed pointer-events-none z-[9999] ${isHoveringConstruction ? "" : "mix-blend-difference"}`}
         style={{
           left: cursorPosition.x,
           top: cursorPosition.y,
@@ -127,9 +130,8 @@ export const SmoothCursor: React.FC<SmoothCursorProps> = ({ children }) => {
           transition: 'opacity 200ms ease-out',
         }}
       >
-        {isHoveringMasaajid ? (
-          /* Red "Under Construction" badge cursor */
-          <div className="bg-red-500 text-white px-3 py-1 text-sm font-medium rounded-full whitespace-nowrap [font-family:'Bricolage_Grotesque',Helvetica]" style={{ boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)' }}>
+        {isHoveringConstruction ? (
+          <div className="bg-red-500 text-white px-3 py-1 text-sm font-normal rounded-full whitespace-nowrap [font-family:'Space_Mono',monospace]" style={{ boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)' }}>
             Under Construction
           </div>
         ) : (
