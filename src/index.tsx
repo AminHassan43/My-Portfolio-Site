@@ -1,4 +1,4 @@
-import { StrictMode, useEffect } from "react";
+import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Desktop } from "./screens/Desktop";
@@ -8,6 +8,35 @@ import { TeslaProject } from "./screens/TeslaProject";
 import { Photography } from "./screens/Photography";
 import { SportsDesign } from "./screens/SportsDesign";
 import { SmoothCursor } from "./components/SmoothCursor";
+
+const MOBILE_QUERY = "(max-width: 767px)";
+
+const MobileNotice = () => (
+  <main className="flex min-h-[100svh] w-full items-center justify-center bg-white px-6">
+    <p className="intro-message-style mobile-notice-message">
+      sorry, mobile view will be out soon. For now, check this out on your
+      desktop :)
+    </p>
+  </main>
+);
+
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(() =>
+    window.matchMedia(MOBILE_QUERY).matches,
+  );
+
+  useEffect(() => {
+    const query = window.matchMedia(MOBILE_QUERY);
+    const updateMobileView = (event: MediaQueryListEvent) => {
+      setIsMobile(event.matches);
+    };
+
+    query.addEventListener("change", updateMobileView);
+    return () => query.removeEventListener("change", updateMobileView);
+  }, []);
+
+  return isMobile;
+};
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
@@ -40,6 +69,12 @@ const ScrollToTop = () => {
 };
 
 const App = () => {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return <MobileNotice />;
+  }
+
   return (
     <SmoothCursor>
       <BrowserRouter>
