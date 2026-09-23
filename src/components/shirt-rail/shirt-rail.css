@@ -4,6 +4,7 @@
 .shirt-rail,.shirt-rail *{box-sizing:border-box}
 .shirt-rail button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 .shirt-rail button:focus-visible{outline:2px solid #353d39;outline-offset:5px}
+.shirt-rail .shirt-rail-position,.shirt-rail .shirt-rail-summary{display:none}
 
 /* Rack */
 .shirt-rail .rack-room{position:relative;margin:0;height:calc(var(--row-height)*2 + var(--row-gap))}
@@ -59,25 +60,144 @@
 .shirt-rail .dialog-logo-fallback{display:grid;width:180px;max-width:100%;height:180px;place-items:center;color:#3f444c;font-family:"Fraunces",Georgia,serif;font-size:var(--type-header,40px);font-weight:400;letter-spacing:-.025em;text-align:center}
 .shirt-rail .dialog-copy{display:flex;min-width:0;padding:56px 52px 50px 16px;align-self:stretch;flex-direction:column;justify-content:center;font-family:"Space Mono",monospace}
 .shirt-rail .dialog-club{margin:0;font-family:"Fraunces",Georgia,serif;font-size:var(--type-header,40px);font-optical-sizing:auto;font-weight:400;letter-spacing:-.025em;line-height:1.05;overflow-wrap:anywhere}
+.shirt-rail .dialog-subtitle{display:none;margin:7px 0 0;color:#4c5159;font-family:"Space Mono",monospace;font-size:var(--type-detail,12px);font-weight:400;letter-spacing:-.02em;line-height:1.35;overflow-wrap:anywhere}
 .shirt-rail .dialog-meta{display:grid;width:100%;margin:28px 0 0;padding:0}
 .shirt-rail .dialog-meta>div{display:grid;padding:15px 0;align-items:baseline;grid-template-columns:86px minmax(0,1fr);gap:18px;border-top:1px solid rgba(18,18,18,.13)}
 .shirt-rail .dialog-meta>div:last-child{border-bottom:1px solid rgba(18,18,18,.13)}
 .shirt-rail .dialog-meta dt{color:#5f646d;font-size:var(--type-detail,12px);font-weight:700;letter-spacing:.15em;text-transform:uppercase}
 .shirt-rail .dialog-meta dd{min-width:0;margin:0;font-size:var(--type-body,16px);font-weight:400;letter-spacing:-.035em;line-height:1.4;text-align:right;overflow-wrap:anywhere}
 
-@media(min-width:680px){
+@media(min-width:900px){
   .shirt-rail{--pitch:min(calc((88vw - 124px) / var(--rack-cols,16)),52px);--row-height:335px;--row-gap:26px;--edge-gutter:62px}
   .shirt-rail .rack-room{height:calc(var(--row-height)*2 + var(--row-gap))}
   .shirt-rail .rack-strip{overflow:visible;scroll-snap-type:none}
   .shirt-rail .rack-track{padding:0;margin:0 auto}
   .shirt-rail .dialog-panel{grid-template-columns:280px minmax(0,1fr);min-height:390px}
 }
-@media(max-width:679px){
+@media(max-width:899px){
+  .shirt-rail{
+    --pitch:clamp(88px,24vw,116px);
+    --pitch-half:clamp(44px,12vw,58px);
+    --row-height:clamp(240px,75vw,305px);
+    --kit-width:clamp(96px,30vw,122px);
+    --kit-half-width:clamp(48px,15vw,61px);
+    --kit-pivot-y:clamp(13px,4.2vw,17px);
+    --row-gap:0px;
+    --edge-gutter:calc(50vw - var(--pitch-half));
+    min-height:0;
+    height:var(--row-height);
+    justify-content:flex-start;
+  }
+  .shirt-rail .rack-room{
+    height:calc(100% - var(--rack-count-space,64px));
+    flex:0 0 calc(100% - var(--rack-count-space,64px));
+  }
+  .shirt-rail .rack-strip{
+    overflow-x:auto;
+    overflow-y:visible;
+    scroll-snap-type:none;
+    scroll-padding-inline:var(--edge-gutter);
+  }
+  .shirt-rail .rack-track{
+    width:max-content;
+    height:var(--row-height);
+    flex-direction:row;
+    gap:0;
+  }
+  .shirt-rail .rack-row{
+    width:max-content;
+    height:var(--row-height);
+    flex:0 0 auto;
+    padding:0;
+  }
+  .shirt-rail .rack-row:first-of-type{padding-left:var(--edge-gutter)}
+  .shirt-rail .rack-row:last-of-type{padding-right:var(--edge-gutter)}
+  .shirt-rail .rack-row+.rack-row{margin-top:0}
+  .shirt-rail .rail{
+    left:-24px;
+    right:auto;
+    width:calc(200% + 48px);
+    mask-image:none;
+    -webkit-mask-image:none;
+  }
+  .shirt-rail .rack-row:first-of-type .rail{display:block}
+  .shirt-rail .rack-row:not(:first-of-type) .rail{display:none}
+  .shirt-rail .rail i{display:none}
+  .shirt-rail .kit{
+    height:var(--row-height);
+  }
+  .shirt-rail .kit svg{
+    width:var(--kit-width);
+    height:var(--row-height);
+  }
+  .shirt-rail .kit>.swing{
+    left:calc(50% - var(--kit-half-width));
+    width:var(--kit-width);
+    height:var(--row-height);
+    transform-origin:var(--kit-half-width) var(--kit-pivot-y);
+  }
+  .shirt-rail .shirt-rail-position{
+    display:block;
+    width:100%;
+    min-height:32px;
+    margin:0;
+    padding-top:8px;
+    color:#4c5159;
+    font-family:"Space Mono",monospace;
+    font-size:var(--type-detail,12px);
+    font-weight:500;
+    letter-spacing:.01em;
+    line-height:1.4;
+    text-align:center;
+  }
+  .shirt-rail .shirt-rail-summary{
+    display:flex;
+    width:100%;
+    min-height:32px;
+    margin:0;
+    padding:0 16px;
+    align-items:center;
+    flex-direction:column;
+    color:#4c5159;
+    font-family:"Space Mono",monospace;
+    font-size:var(--type-body,16px);
+    font-weight:400;
+    letter-spacing:-.02em;
+    line-height:1.35;
+    text-align:center;
+  }
+  .shirt-rail .shirt-rail-summary-club{
+    color:#20242a;
+    font-weight:700;
+  }
+  .shirt-rail .shirt-rail-summary-meta{
+    display:block;
+    margin-top:2px;
+  }
+  .shirt-rail .kit,
+  .shirt-rail .rack-strip,
+  .shirt-rail button{
+    cursor:none !important;
+  }
   .shirt-rail dialog{width:calc(100% - 28px)}
-  .shirt-rail .dialog-logo-stage{padding:52px 52px 16px}
-  .shirt-rail .dialog-logo,.shirt-rail .dialog-logo-fallback{width:156px;height:156px}
-  .shirt-rail .dialog-copy{padding:16px 28px 34px;align-items:center;text-align:center}
-  .shirt-rail .dialog-meta{margin-top:24px;text-align:left}
+  .shirt-rail .dialog-panel{
+    grid-template-columns:minmax(76px,30%) minmax(0,1fr);
+    min-height:128px;
+    align-items:center;
+  }
+  .shirt-rail .dialog-logo-stage{padding:20px 8px 20px 20px}
+  .shirt-rail .dialog-logo,.shirt-rail .dialog-logo-fallback{
+    width:clamp(64px,22vw,92px);
+    height:clamp(64px,22vw,92px);
+  }
+  .shirt-rail .dialog-copy{
+    padding:20px 20px 20px 8px;
+    align-items:flex-start;
+    justify-content:center;
+    text-align:left;
+  }
+  .shirt-rail .dialog-club{font-size:var(--type-body,16px)}
+  .shirt-rail .dialog-subtitle{display:block;margin-top:6px;font-size:var(--type-detail,12px)}
 }
 @media(hover:hover){.shirt-rail .close:hover{background:rgba(255,255,255,.62);transform:scale(1.04)}}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.shirt-rail dialog{background-color:rgba(255,255,255,.96)}}

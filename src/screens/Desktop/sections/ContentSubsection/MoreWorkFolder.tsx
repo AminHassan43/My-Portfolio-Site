@@ -38,6 +38,8 @@ const ExplosionOverlay = ({
     return () => clearTimeout(timer);
   }, [onComplete]);
 
+  const scale = Math.max(0.1, originRect.width / 249);
+
   return createPortal(
     <div className="fixed inset-0 z-[9999] pointer-events-none flex items-center justify-center">
       {/* Dynamic style for keyframes */}
@@ -73,10 +75,10 @@ const ExplosionOverlay = ({
         src={rectangle8}
         className={`absolute z-[60] transition-transform duration-[250ms]`}
         style={{
-          top: originRect.top + 39, // Match original CSS top: 39px
+          top: originRect.top + 39 * scale, // Match original CSS top: 39px
           left: originRect.left,
-          width: '249px',
-          height: '119px',
+          width: originRect.width,
+          height: 119 * scale,
           transformOrigin: 'bottom',
           // The folder ScaleY compression should be 300ms linear
           transitionTimingFunction: 'linear',
@@ -86,17 +88,17 @@ const ExplosionOverlay = ({
 
       {images.map((src, i) => {
         // Initial position relative to the viewport
-        const initialTop = originRect.top + 35 + (i * 5); 
-        const initialLeft = originRect.left + 50 + (i * 30);
+        const initialTop = originRect.top + (35 + i * 5) * scale;
+        const initialLeft = originRect.left + (50 + i * 30) * scale;
         
-        const imageCenterX = initialLeft + 40; 
-        const imageCenterY = initialTop + 50;
+        const imageCenterX = initialLeft + 40 * scale;
+        const imageCenterY = initialTop + 50 * scale;
 
         const style = {
           top: initialTop,
           left: initialLeft,
-          width: '80px',
-          height: '100px',
+          width: 80 * scale,
+          height: 100 * scale,
           zIndex: 50, // Behind the folder front (z-60) initially
           '--img-center-x': `${imageCenterX}px`,
           '--img-center-y': `${imageCenterY}px`,
@@ -154,19 +156,21 @@ export const MoreWorkFolder = ({ category }: MoreWorkFolderProps) => {
 
   const Content = () => (
     <div 
-      ref={folderRef}
       data-cursor={!category.url ? "under-construction" : undefined}
       className={`more-work-item inline-flex flex-col items-center gap-4 relative rounded-[14.77px] transition-all duration-200 ease-in-out cursor-pointer group
-        ${isPressed ? 'scale-95 translate-y-1' : 'hover:-translate-y-2'}
+        ${isPressed ? "scale-95 translate-y-1" : "hover:-translate-y-2"}
       `}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="relative w-[249.28px] h-[157.2px] overflow-visible">
-        <div className="relative w-[249px] h-[157px] overflow-visible">
+      <div
+        ref={folderRef}
+        className="more-work-art relative w-[249.28px] h-[157.2px] overflow-visible"
+      >
+        <div className="more-work-art-inner relative w-[249px] h-[157px] overflow-visible">
           <img
-            className="absolute w-[233px] h-[157px] top-0 left-px"
+            className="more-work-folder-union absolute w-[233px] h-[157px] top-0 left-px"
             alt="Union"
             src={union}
           />
@@ -179,7 +183,7 @@ export const MoreWorkFolder = ({ category }: MoreWorkFolderProps) => {
           */}
           
           {/* Image 1 */}
-          <div className={`absolute w-[80px] h-[100px] top-[35px] left-[50px] z-0 transition-all ease-out
+          <div className={`more-work-image more-work-image-1 absolute w-[80px] h-[100px] top-[35px] left-[50px] z-0 transition-all ease-out
             ${isPressed 
               ? 'translate-y-2 translate-x-0 rotate-[-8deg] duration-300' 
               : 'group-hover:-translate-y-16 group-hover:-translate-x-4 group-hover:rotate-[-15deg] -translate-y-4 -translate-x-2 rotate-[-8deg] duration-500 delay-100'
@@ -194,7 +198,7 @@ export const MoreWorkFolder = ({ category }: MoreWorkFolderProps) => {
           </div>
 
           {/* Image 2 */}
-          <div className={`absolute w-[80px] h-[100px] top-[40px] left-[85px] z-0 transition-all ease-out
+          <div className={`more-work-image more-work-image-2 absolute w-[80px] h-[100px] top-[40px] left-[85px] z-0 transition-all ease-out
             ${isPressed 
               ? 'translate-y-2 duration-300' 
               : 'group-hover:-translate-y-20 -translate-y-6 duration-500 delay-200'
@@ -209,7 +213,7 @@ export const MoreWorkFolder = ({ category }: MoreWorkFolderProps) => {
           </div>
 
           {/* Image 3 */}
-          <div className={`absolute w-[80px] h-[100px] top-[35px] left-[110px] z-0 transition-all ease-out
+          <div className={`more-work-image more-work-image-3 absolute w-[80px] h-[100px] top-[35px] left-[110px] z-0 transition-all ease-out
             ${isPressed 
               ? 'translate-y-2 translate-x-0 rotate-[8deg] duration-300' 
               : 'group-hover:-translate-y-16 group-hover:translate-x-4 group-hover:rotate-[15deg] -translate-y-4 translate-x-2 rotate-[8deg] duration-500 delay-300'
@@ -224,7 +228,7 @@ export const MoreWorkFolder = ({ category }: MoreWorkFolderProps) => {
           </div>
           
           <img
-            className={`absolute w-[249px] h-[119px] top-[39px] left-0 z-10 ${isExploding ? 'opacity-0' : 'opacity-100'}`}
+            className={`more-work-folder-front absolute w-[249px] h-[119px] top-[39px] left-0 z-10 ${isExploding ? 'opacity-0' : 'opacity-100'}`}
             alt="Rectangle"
             src={rectangle8}
           />

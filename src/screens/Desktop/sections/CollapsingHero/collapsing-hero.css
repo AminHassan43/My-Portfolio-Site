@@ -74,68 +74,33 @@
 .collapsing-mobile-intro::before {
   position: absolute;
   z-index: -1;
-  inset: -24px -16px -30px;
+  inset: -72px -16px -320px;
   background:
-    radial-gradient(
-      ellipse 125% 46% at -6% 8%,
-      rgba(255, 255, 255, 0.68) 0%,
-      rgba(255, 255, 255, 0.42) 58%,
-      transparent 100%
-    ),
-    radial-gradient(
-      ellipse 138% 56% at 8% 49%,
-      rgba(255, 255, 255, 0.72) 0%,
-      rgba(255, 255, 255, 0.46) 62%,
-      transparent 100%
-    ),
-    radial-gradient(
-      ellipse 118% 44% at -2% 94%,
-      rgba(255, 255, 255, 0.66) 0%,
-      rgba(255, 255, 255, 0.38) 55%,
-      transparent 100%
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.86) 0%,
+      rgba(255, 255, 255, 0.7) 34%,
+      rgba(255, 255, 255, 0.42) 68%,
+      rgba(255, 255, 255, 0) 100%
     );
   content: "";
   pointer-events: none;
   backdrop-filter: blur(12px) saturate(82%);
   -webkit-backdrop-filter: blur(12px) saturate(82%);
-  mask-image:
-    radial-gradient(
-      ellipse 122% 50% at -4% 8%,
-      #000 0%,
-      #000 44%,
-      transparent 100%
-    ),
-    radial-gradient(
-      ellipse 136% 58% at 7% 50%,
-      #000 0%,
-      #000 48%,
-      transparent 100%
-    ),
-    radial-gradient(
-      ellipse 116% 48% at -3% 94%,
-      #000 0%,
-      #000 42%,
-      transparent 100%
-    );
-  -webkit-mask-image:
-    radial-gradient(
-      ellipse 122% 50% at -4% 8%,
-      #000 0%,
-      #000 44%,
-      transparent 100%
-    ),
-    radial-gradient(
-      ellipse 136% 58% at 7% 50%,
-      #000 0%,
-      #000 48%,
-      transparent 100%
-    ),
-    radial-gradient(
-      ellipse 116% 48% at -3% 94%,
-      #000 0%,
-      #000 42%,
-      transparent 100%
-    );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 46%,
+    rgba(0, 0, 0, 0.82) 70%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 46%,
+    rgba(0, 0, 0, 0.82) 70%,
+    transparent 100%
+  );
 }
 
 @supports not (
@@ -709,6 +674,140 @@
   text-underline-offset: 4px;
 }
 
+/* The hero is mobile below 900px. Keep its type fluid so the smallest phones
+   do not inherit desktop-sized headings or spacing. */
+@media (max-width: 899px) {
+  .collapsing-home {
+    --type-hero: clamp(44px, 13.5vw, 58px);
+    --type-header: clamp(28px, 8.5vw, 36px);
+    --type-body: clamp(14px, 3.9vw, 16px);
+    --type-detail: clamp(11px, 3.1vw, 12px);
+  }
+
+  .collapsing-mobile-intro {
+    padding-inline: 8px;
+  }
+
+  .collapsing-mobile-intro::before {
+    right: -24px;
+    left: -24px;
+  }
+
+  .collapsing-mobile-bar,
+  .collapsing-mobile-menu,
+  .collapsing-mobile-scroll-hint {
+    display: none !important;
+  }
+
+  .collapsing-hero-stage {
+    gap: clamp(28px, 7vw, 44px);
+    padding-top: clamp(28px, 8vw, 44px);
+    padding-bottom: clamp(48px, 12vw, 72px);
+  }
+
+  .collapsing-mobile-intro h1 {
+    margin-top: clamp(12px, 4vw, 18px);
+    font-size: var(--type-hero);
+  }
+
+  .collapsing-hero-intro {
+    margin-top: clamp(16px, 5vw, 22px);
+    font-size: var(--type-body);
+  }
+
+  .collapsing-hero-intro-underline,
+  .collapsing-hero-intro strong {
+    display: inline;
+    white-space: normal;
+  }
+
+  .shirt-rail-wrap {
+    width: calc(100% + 32px);
+    --rack-count-space: 80px;
+    height: calc(clamp(260px, 75vw, 330px) + var(--rack-count-space));
+    min-height: 0;
+    margin-left: -16px;
+    overflow: hidden;
+  }
+
+  .shirt-rail-scale {
+    height: 100%;
+    transform: none;
+  }
+
+  .shirt-rail-wrap .shirt-rail {
+    min-height: 0;
+    height: 100%;
+  }
+
+  .experience-accordion {
+    --experience-pad-y: clamp(12px, 3.8vw, 20px);
+    margin-top: clamp(14px, 4vw, 18px);
+  }
+
+  .experience-item h3 > button {
+    padding: var(--experience-pad-y) 0;
+    align-items: center;
+    grid-template-areas:
+      "company role"
+      "company duration";
+    grid-template-columns:
+      var(--experience-logo)
+      minmax(0, 1fr);
+    gap: 1px clamp(10px, 3.2vw, 14px);
+  }
+
+  .experience-role {
+    padding-left: 0;
+    font-size: var(--type-detail);
+    line-height: 1.1;
+  }
+
+  .experience-duration {
+    font-size: var(--type-detail);
+    line-height: 1.1;
+  }
+
+  .collapsing-hero-kit-hint,
+  .collapsing-mobile-scroll-hint {
+    font-size: var(--type-detail);
+  }
+
+  .collapsing-mobile-name {
+    font-size: var(--type-header) !important;
+  }
+
+  .collapsing-mobile-menu nav > p,
+  .collapsing-mobile-menu ol a > span,
+  .collapsing-mobile-menu-email {
+    font-size: var(--type-detail);
+  }
+
+  .collapsing-mobile-menu ol a > strong,
+  .collapsing-mobile-menu-secondary a {
+    font-size: var(--type-body);
+  }
+
+  .collapsing-home-content .case-study-card h3 {
+    font-size: clamp(16px, 5vw, 20px) !important;
+    line-height: 1.2;
+  }
+
+  .collapsing-home-content .case-study-card {
+    aspect-ratio: 4 / 3 !important;
+  }
+
+  .collapsing-home-content .case-study-card p {
+    font-size: clamp(12px, 4vw, 16px) !important;
+    line-height: 1.25;
+  }
+
+  .collapsing-home-content > section > h2,
+  .collapsing-home-content .footer-container p {
+    font-size: clamp(13px, 3.9vw, 16px) !important;
+  }
+}
+
 @media (min-width: 900px) {
   .collapsing-home {
     --resume-pad-y: 26px;
@@ -716,7 +815,8 @@
 
   .collapsing-mobile-intro,
   .collapsing-mobile-bar,
-  .collapsing-mobile-menu {
+  .collapsing-mobile-menu,
+  .collapsing-mobile-scroll-hint {
     display: none;
   }
 

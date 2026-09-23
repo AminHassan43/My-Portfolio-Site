@@ -5,7 +5,7 @@
 // The rack canvas spans the track plus a symmetric pad, and the loader covers
 // the whole rack room. Offset math keeps this correct under the 0.9 hero scale.
 export function rackRect(loader, track) {
-  const pad = matchMedia("(min-width:680px)").matches ? 42 : 0;
+  const pad = matchMedia("(min-width:900px)").matches ? 42 : 0;
   const origin = loader.offsetParent;
   let x = 0;
   let y = 0;

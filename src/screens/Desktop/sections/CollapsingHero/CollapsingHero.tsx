@@ -690,14 +690,6 @@ export const CollapsingHero = ({
           </p>
           <ExperienceAccordion idPrefix="mobile-experience" />
           <KitCollectionHint />
-          <a
-            className="collapsing-mobile-scroll-hint"
-            href="#projects"
-            onClick={(event) => handleSectionClick(event, "projects")}
-          >
-            <span>Scroll for case studies</span>
-            <ArrowDown aria-hidden="true" />
-          </a>
         </div>
 
         <h2 id="collection-title" className="shirt-rail-title">
@@ -708,6 +700,14 @@ export const CollapsingHero = ({
             <ShirtRailHero />
           </div>
         </div>
+        <a
+          className="collapsing-mobile-scroll-hint"
+          href="#projects"
+          onClick={(event) => handleSectionClick(event, "projects")}
+        >
+          <span>Scroll for case studies</span>
+          <ArrowDown aria-hidden="true" />
+        </a>
       </section>
 
       <div className="collapsing-home-content">{children}</div>

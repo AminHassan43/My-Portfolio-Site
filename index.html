@@ -73,7 +73,11 @@
         image-rendering: auto;
       }
 
-      .intro-message-style {
+      #intro .intro-message {
+        position: absolute;
+        z-index: 1;
+        top: 50%;
+        left: 50%;
         margin: 0;
         color: #000;
         font-family: "Space Mono", monospace;
@@ -82,22 +86,8 @@
         letter-spacing: 0.01em;
         line-height: 1;
         pointer-events: none;
-      }
-
-      #intro .intro-message {
-        position: absolute;
-        z-index: 1;
-        top: 50%;
-        left: 50%;
         transform: translate(-50%, -50%);
         white-space: nowrap;
-      }
-
-      .mobile-notice-message {
-        max-width: 20rem;
-        line-height: 1.625;
-        text-align: center;
-        white-space: normal;
       }
 
       #intro.is-rendering {
@@ -138,7 +128,6 @@
         }
 
         if (
-          window.matchMedia("(max-width: 767px)").matches ||
           window.location.pathname !== "/" ||
           (window.location.hash && window.location.hash !== "#top")
         ) {
@@ -153,7 +142,7 @@
   <body>
     <div id="intro" aria-hidden="true">
       <canvas id="intro-noise"></canvas>
-      <p class="intro-message intro-message-style">Welcome :)</p>
+      <p class="intro-message">Welcome :)</p>
     </div>
     <div id="app"></div>
     <script>

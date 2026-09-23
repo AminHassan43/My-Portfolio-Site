@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { ProjectCard } from "./ProjectCard";
 import { MoreWorkFolder } from "./MoreWorkFolder";
 import { HOME_PROJECTS } from "../../homeData";
@@ -37,6 +38,75 @@ const MORE_WORK_CATEGORIES = [
 ];
 
 export const ContentSubsection = (): JSX.Element => {
+  useEffect(() => {
+    const mobile = window.matchMedia("(max-width: 899px)");
+    let frame: number | undefined;
+
+    const updateFocus = () => {
+      if (frame !== undefined) {
+        return;
+      }
+
+      frame = window.requestAnimationFrame(() => {
+        frame = undefined;
+        const items = Array.from(
+          document.querySelectorAll<HTMLElement>(".more-work-item"),
+        );
+
+        if (!mobile.matches) {
+          items.forEach((item) =>
+            item.classList.remove("is-mobile-focused"),
+          );
+          return;
+        }
+
+        const focusLine = window.innerHeight / 2;
+        const focusTop = window.innerHeight * 0.2;
+        const focusBottom = window.innerHeight * 0.8;
+        let closest: HTMLElement | null = null;
+        let closestDistance = Infinity;
+
+        items.forEach((item) => {
+          const art = item.querySelector<HTMLElement>(".more-work-art");
+          const rect = art?.getBoundingClientRect();
+          if (
+            !rect ||
+            rect.bottom < focusTop ||
+            rect.top > focusBottom
+          ) {
+            return;
+          }
+
+          const distance = Math.abs(
+            rect.top + rect.height / 2 - focusLine,
+          );
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closest = item;
+          }
+        });
+
+        items.forEach((item) =>
+          item.classList.toggle("is-mobile-focused", item === closest),
+        );
+      });
+    };
+
+    updateFocus();
+    window.addEventListener("scroll", updateFocus, { passive: true });
+    window.addEventListener("resize", updateFocus);
+    mobile.addEventListener("change", updateFocus);
+
+    return () => {
+      window.removeEventListener("scroll", updateFocus);
+      window.removeEventListener("resize", updateFocus);
+      mobile.removeEventListener("change", updateFocus);
+      if (frame !== undefined) {
+        window.cancelAnimationFrame(frame);
+      }
+    };
+  }, []);
+
   return (
     <div className="w-full max-w-[1292px] items-center gap-[40px] md:gap-[68px] flex flex-col relative px-4 md:px-0">
       <div
@@ -62,7 +132,7 @@ export const ContentSubsection = (): JSX.Element => {
           here is some more of my creative work :)
         </h2>
 
-        <div className="more-work-grid relative mx-auto grid w-full grid-cols-1 items-start justify-center justify-items-center gap-x-12 gap-y-16 md:grid-cols-2 lg:grid-cols-4">
+        <div className="more-work-grid relative mx-auto grid w-full grid-cols-2 items-start justify-center justify-items-center gap-x-12 gap-y-16 md:grid-cols-2 lg:grid-cols-4">
           {MORE_WORK_CATEGORIES.map((category) => (
             <MoreWorkFolder key={category.name} category={category} />
           ))}
