@@ -76,10 +76,9 @@ export class ShirtRack3D {
         const start=firstRow.offsetLeft;
         const end=lastRow.offsetLeft+lastRow.offsetWidth;
         if(index===0){
-          const centerX=(start+end)/2-this.width/2;
+          const centerX=((start+end)/2-this.width/2)/PX;
           const railLength=Math.max(1,end-start+48);
-          // The mobile rod is the fixed .rack-rod element, so it never ends inside the scroll range.
-          const rail=this.rails[0];rail.visible=false;rail.position.set(centerX,railY,0);rail.scale.y=railLength/PX;
+          const rail=this.rails[0];rail.visible=true;rail.position.set(centerX,railY,0);rail.scale.y=railLength/PX;
           const floor=this.floors[0];floor.visible=true;floor.position.set(centerX,railY-3.08,0);
         }else{
           this.rails[index].visible=false;

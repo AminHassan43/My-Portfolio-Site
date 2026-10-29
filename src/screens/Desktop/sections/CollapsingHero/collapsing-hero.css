@@ -699,9 +699,9 @@
   }
 
   .collapsing-hero-stage {
-    gap: clamp(28px, 7vw, 44px);
+    gap: clamp(56px, 16vw, 80px);
     padding-top: clamp(28px, 8vw, 44px);
-    padding-bottom: clamp(48px, 12vw, 72px);
+    padding-bottom: clamp(88px, 24vw, 128px);
   }
 
   .collapsing-mobile-intro h1 {

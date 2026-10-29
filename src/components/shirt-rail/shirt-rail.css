@@ -109,7 +109,8 @@
   .shirt-rail .rack-row:first-of-type{padding-left:var(--edge-gutter)}
   .shirt-rail .rack-row:last-of-type{padding-right:var(--edge-gutter)}
   .shirt-rail .rack-row+.rack-row{margin-top:0}
-  /* The rod sits outside the scroller so it always spans the full width. */
+  /* The 3D rod wraps the hooks; this flat copy sits behind the canvas, outside
+     the scroller, so overscroll past the canvas edge never shows a gap. */
   .shirt-rail .rail{display:none}
   .shirt-rail .rack-rod{
     display:block;
