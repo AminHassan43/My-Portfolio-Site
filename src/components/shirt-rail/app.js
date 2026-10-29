@@ -21,23 +21,17 @@ export function mountShirtRail(root, {assetBase=import.meta.url}={}){
   const position=root.querySelector('.shirt-rail-position');
   const summaryClub=root.querySelector('.shirt-rail-summary-club');
   const summaryMeta=root.querySelector('.shirt-rail-summary-meta');
+  const summaryLogo=root.querySelector('.shirt-rail-logo');
+  const details=root.querySelector('.shirt-rail-details');
   const buttons=[...strip.querySelectorAll('.kit')];
   const slots=[...strip.querySelectorAll('.slot')];
-  const dialog=root.querySelector('dialog');
-  const closeButton=dialog.querySelector('.close');
-  const logoImage=dialog.querySelector('.dialog-logo');
-  const logoFallback=dialog.querySelector('.dialog-logo-fallback');
-  const clubText=dialog.querySelector('.dialog-club');
-  const metaText=dialog.querySelector('#shirt-rail-meta');
-  const yearText=dialog.querySelector('#shirt-rail-year');
-  const kitTypeText=dialog.querySelector('#shirt-rail-kit-type');
   const mobile=matchMedia('(max-width:899px)');
   const hover=matchMedia('(hover:hover)');
   const reduced=matchMedia('(prefers-reduced-motion:reduce)');
-  let selectedIndex=initialIndex, spreadIndex=null, liftedIndex=null, returnTarget=null, pointerInside=false;
+  let selectedIndex=initialIndex, spreadIndex=null, pointerInside=false;
   let rack3d=null, destroyed=false, rackReady=false;
   let frame=0, previousTime=0, accumulator=0, observer=null, resizeFrame=0, loadTimeout=0, visibleSlots=new Set();
-  let logoGeneration=0, scrollCloseFrame=0, scrollCloseArmed=false, snapTimer=0;
+  let snapTimer=0;
   const cleanups=[];
   const listen=(target,type,fn,options)=>{target.addEventListener(type,fn,options);cleanups.push(()=>target.removeEventListener(type,fn,options));};
   const states=buttons.map((button,i)=>({button,swingEl:button.querySelector('.swing'),hemEl:button.querySelector('.hem'),x:0,v:0,swing:((i*7%17)-8)/5,sv:0,hem:0,hv:0,idle:((i*7%17)-8)/5}));
@@ -46,7 +40,12 @@ export function mountShirtRail(root, {assetBase=import.meta.url}={}){
     const kit=kits[index];
     if(summaryClub)summaryClub.textContent=kit.club;
     if(summaryMeta)summaryMeta.textContent=`${displayKitType(kit.kitType)} - ${kit.year}`;
+    if(summaryLogo){
+      const src=new URL(kit.logo,new URL(assetBase,location.href)).href;
+      if(summaryLogo.src!==src){summaryLogo.hidden=false;summaryLogo.src=src;}
+    }
   };
+  if(summaryLogo)listen(summaryLogo,'error',()=>{summaryLogo.hidden=true;});
   updatePosition(selectedIndex);
   updateSummary(selectedIndex);
   const rowFor=i=>mobile.matches?0:Math.floor(i/RACK_COLUMNS);
@@ -118,9 +117,14 @@ export function mountShirtRail(root, {assetBase=import.meta.url}={}){
     buttons.forEach((button,i)=>{button.setAttribute('aria-selected',String(i===index));button.tabIndex=i===index?0:-1;button.style.zIndex=String(i===index?kits.length+1:i+1);});
     if(focus)buttons[index].focus({preventScroll:true});
     if(center&&mobile.matches)centerSlot(index);
+    setIdle(false);
     wake();
   }
   function neutralizeSpread(){spreadIndex=null;wake();}
+  // Only a hovering pointer on the desktop rack has a "nothing chosen" state;
+  // the mobile strip always has a centred shirt.
+  function setIdle(on){details?.classList.toggle('is-idle',on&&!mobile.matches&&hover.matches);}
+  function idleIfUnattended(){if(!pointerInside&&!strip.contains(document.activeElement))setIdle(true);}
   function centerSlot(index,behavior='instant'){
     const slot=slots[index];
     const stripRect=strip.getBoundingClientRect();
@@ -129,7 +133,7 @@ export function mountShirtRail(root, {assetBase=import.meta.url}={}){
     strip.scrollTo({left:left+slotRect.width/2-strip.clientWidth/2,behavior});
   }
   function snapNearestToCenter(){
-    if(!mobile.matches||dialog.open)return;
+    if(!mobile.matches)return;
     const stripRect=strip.getBoundingClientRect();
     const center=stripRect.left+strip.clientWidth/2;
     let closestIndex=selectedIndex;
@@ -147,93 +151,27 @@ export function mountShirtRail(root, {assetBase=import.meta.url}={}){
     centerSlot(closestIndex,behavior);
   }
   function scheduleCenterSnap(){
-    if(!mobile.matches||dialog.open)return;
+    if(!mobile.matches)return;
     clearTimeout(snapTimer);
     snapTimer=window.setTimeout(()=>{
       snapTimer=0;
       snapNearestToCenter();
     },120);
   }
-  function notifyDialog(open){root.dispatchEvent(new CustomEvent('shirt-rail-dialog-change',{bubbles:true,detail:{open}}));}
   // The intro overlay waits on this before it will dismiss, so it has to fire on
   // every path that settles the rack, including the fallbacks. The flag covers the
   // overlay having not yet attached its listener when the rack settles early.
   function notifyRackReady(){window.shirtRailReady=true;document.dispatchEvent(new CustomEvent('shirt-rail-ready'));}
-  function showLogo(kit){
-    const generation=++logoGeneration;
-    logoImage.hidden=true;
-    logoFallback.hidden=false;
-    logoImage.alt=`${kit.club} logo`;
-    logoFallback.textContent=kit.club
-      .split(/[\s-]+/)
-      .filter(Boolean)
-      .map(word=>word[0])
-      .join('')
-      .slice(0,3)
-      .toUpperCase();
-    logoImage.removeAttribute('src');
-    let source;
-    try{
-      source=new URL(kit.logo,new URL(assetBase,location.href));
-      if(!['http:','https:'].includes(source.protocol))throw new Error('Unsupported logo URL');
-    }catch{
-      logoFallback.textContent='Logo unavailable';
-      return;
-    }
-    logoImage.onload=()=>{
-      if(generation!==logoGeneration)return;
-      logoImage.hidden=false;
-      logoFallback.hidden=true;
-    };
-    logoImage.onerror=()=>{
-      if(generation!==logoGeneration)return;
-      logoImage.hidden=true;
-      logoFallback.hidden=false;
-      logoFallback.textContent='Logo unavailable';
-    };
-    logoImage.src=source.href;
-  }
-  function lift(index){
-    if(dialog.open)return;
-    select(index);
-    liftedIndex=index;returnTarget=buttons[index];returnTarget.classList.add('is-lifted');
-    const kit=kits[index];
-    showLogo(kit);
-    clubText.textContent=kit.club;
-    metaText.textContent=`${displayKitType(kit.kitType)} - ${kit.year}`;
-    yearText.textContent=kit.year;
-    kitTypeText.textContent=kit.kitType;
-    dialog.showModal();document.body.style.overflow='hidden';notifyDialog(true);closeButton.focus();
-    cancelAnimationFrame(scrollCloseFrame);
-    scrollCloseArmed=false;
-    scrollCloseFrame=requestAnimationFrame(()=>{scrollCloseArmed=dialog.open;});
-    rack3d?.lifted(index,true);
-  }
-  function close(){if(dialog.open)dialog.close();}
-  function closeOnScroll(){
-    if(!dialog.open||!scrollCloseArmed)return;
-    scrollCloseArmed=false;
-    close();
-  }
-  listen(closeButton,'click',close);
-  listen(window,'wheel',closeOnScroll,{capture:true,passive:true});
-  listen(window,'touchmove',closeOnScroll,{capture:true,passive:true});
-  listen(window,'scroll',closeOnScroll,{capture:true,passive:true});
-  let backdropDown=false;
-  listen(dialog,'pointerdown',event=>{backdropDown=event.target===dialog;});
-  listen(dialog,'click',event=>{if(event.target===dialog&&backdropDown)close();});
-  // Escape is handled here too: some embedded browsers skip the native cancel.
-  listen(dialog,'keydown',event=>{if(event.key==='Escape'){event.preventDefault();close();return;}if(event.key==='Tab'){const list=[...dialog.querySelectorAll('button:not([disabled])')];const first=list[0],last=list.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}});
-  listen(dialog,'close',()=>{scrollCloseArmed=false;cancelAnimationFrame(scrollCloseFrame);document.body.style.overflow='';notifyDialog(false);if(liftedIndex!==null){buttons[liftedIndex].classList.remove('is-lifted');rack3d?.lifted(liftedIndex,false);}liftedIndex=null;if(!destroyed){returnTarget?.focus({preventScroll:true});if(!pointerInside&&hover.matches&&!mobile.matches)neutralizeSpread();}});
   buttons.forEach((button,index)=>{
     // Moving garments can enter a stationary pointer. Only actual pointer motion
     // changes hover selection, so it cannot steal selection from the keyboard.
-    listen(button,'pointermove',event=>{if((event.movementX||event.movementY)&&hover.matches&&!mobile.matches&&event.pointerType!=='touch'&&!dialog.open&&(selectedIndex!==index||spreadIndex!==index))select(index);});
-    listen(button,'focus',()=>{if(!dialog.open&&(selectedIndex!==index||spreadIndex!==index))select(index);});
-    listen(button,'click',()=>{if(!mobile.matches)lift(index);});
+    listen(button,'pointermove',event=>{if((event.movementX||event.movementY)&&hover.matches&&!mobile.matches&&event.pointerType!=='touch'&&(selectedIndex!==index||spreadIndex!==index))select(index);});
+    listen(button,'focus',()=>{if(selectedIndex!==index||spreadIndex!==index)select(index);});
+    listen(button,'click',()=>{if(!mobile.matches)select(index);});
   });
   listen(rackRoom,'pointerenter',()=>{pointerInside=true;});
-  listen(rackRoom,'pointerleave',()=>{pointerInside=false;if(!dialog.open&&hover.matches&&!mobile.matches)neutralizeSpread();});
+  listen(rackRoom,'pointerleave',()=>{pointerInside=false;if(hover.matches&&!mobile.matches){neutralizeSpread();idleIfUnattended();}});
+  listen(strip,'focusout',event=>{if(!strip.contains(event.relatedTarget))idleIfUnattended();});
   listen(strip,'keydown',event=>{
     let next=selectedIndex;
     const row=rowFor(selectedIndex),column=columnFor(selectedIndex);
@@ -256,7 +194,6 @@ export function mountShirtRail(root, {assetBase=import.meta.url}={}){
     // band selects the closest shirt without any scroll listener or layout loop.
     const inset=Math.max(0,(strip.clientWidth-2)/2);
     observer=new IntersectionObserver(entries=>{
-      if(dialog.open)return;
       entries.forEach(entry=>entry.isIntersecting?visibleSlots.add(entry.target):visibleSlots.delete(entry.target));
       const selectedRow=rowFor(selectedIndex);
       const candidates=[...visibleSlots].filter(slot=>rowFor(Number(slot.dataset.index))===selectedRow);
@@ -275,12 +212,13 @@ export function mountShirtRail(root, {assetBase=import.meta.url}={}){
   function placePoster(){placeRackPoster(loaderEl,poster,track);}
   const resizeObserver=new ResizeObserver(()=>{cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(()=>{observeCenter();placePoster();rack3d?.resize();rack3d?.update(states);});});
   resizeObserver.observe(strip);
-  listen(mobile,'change',()=>{clearTimeout(snapTimer);snapTimer=0;previousScrollLeft=strip.scrollLeft;if(!mobile.matches)strip.scrollLeft=0;observeCenter();wake();});
+  listen(mobile,'change',()=>{clearTimeout(snapTimer);snapTimer=0;previousScrollLeft=strip.scrollLeft;if(!mobile.matches)strip.scrollLeft=0;observeCenter();if(mobile.matches)setIdle(false);else idleIfUnattended();wake();});
   listen(reduced,'change',()=>{cancelAnimationFrame(frame);frame=0;wake();});
   listen(document,'visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;previousTime=0;accumulator=0;}else wake();});
   // Preserve the server-rendered still pose on load. Motion starts with input.
   if(reduced.matches)applyReduced();
   observeCenter();
+  setIdle(true);
   // The pre-rendered poster is the still loading state; WebGL remains hidden
   // until every texture has settled.
   placePoster();
@@ -312,14 +250,13 @@ export function mountShirtRail(root, {assetBase=import.meta.url}={}){
         rack3d?.update(states);
         root.classList.remove('is-loading','is-revealing','webgl-unavailable');
         root.classList.add('webgl-ready','is-loaded');
-        if(dialog.open&&liftedIndex!==null)rack3d?.lifted(liftedIndex,true);
         notifyRackReady();
       });
       rack3d.update(states);
     }).catch(showFallback);
   }
-  // Yield once after the dissolve's first frame so that paint is not immediately
-  // pre-empted by shader compiles. The overlay no longer waits on the rack.
+  // Start the rack after the first loading frame has painted, then let it use
+  // the rest of the intro duration to build while the loading screen is shown.
   function buildAfterIntroPaint(){
     const startBuild=()=>{
       if(destroyed||buildStarted)return;
@@ -346,15 +283,9 @@ export function mountShirtRail(root, {assetBase=import.meta.url}={}){
   return function destroy(){
     if(destroyed)return;
     destroyed=true;
-    notifyDialog(false);
-    close();
-    cancelAnimationFrame(frame);cancelAnimationFrame(resizeFrame);cancelAnimationFrame(scrollCloseFrame);frame=0;clearTimeout(loadTimeout);clearTimeout(snapTimer);snapTimer=0;
+    cancelAnimationFrame(frame);cancelAnimationFrame(resizeFrame);frame=0;clearTimeout(loadTimeout);clearTimeout(snapTimer);snapTimer=0;
     observer?.disconnect();resizeObserver.disconnect();
     cleanups.forEach(fn=>fn());
-    logoGeneration++;
-    logoImage.onload=null;
-    logoImage.onerror=null;
-    document.body.style.overflow='';
     rack3d?.dispose();rack3d=null;
     root.classList.remove('webgl-ready','webgl-unavailable');
   };

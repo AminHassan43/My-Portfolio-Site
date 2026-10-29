@@ -78,7 +78,8 @@ export class ShirtRack3D {
         if(index===0){
           const centerX=(start+end)/2-this.width/2;
           const railLength=Math.max(1,end-start+48);
-          const rail=this.rails[0];rail.visible=true;rail.position.set(centerX,railY,0);rail.scale.y=railLength/PX;
+          // The mobile rod is the fixed .rack-rod element, so it never ends inside the scroll range.
+          const rail=this.rails[0];rail.visible=false;rail.position.set(centerX,railY,0);rail.scale.y=railLength/PX;
           const floor=this.floors[0];floor.visible=true;floor.position.set(centerX,railY-3.08,0);
         }else{
           this.rails[index].visible=false;
@@ -107,7 +108,6 @@ export class ShirtRack3D {
     this.render();
   }
   update(states){states.forEach((s,i)=>{const item=this.items[i];if(!item||item.baseX===undefined)return;item.pivot.position.x=item.baseX+s.x/PX;item.pivot.rotation.z=-THREE.MathUtils.degToRad(s.swing);item.drapes.forEach(d=>d.value=THREE.MathUtils.clamp((s.hem-s.swing*.42)*.13,-.24,.24));});this.render();}
-  lifted(index,on){const item=this.items[index];if(!item)return;for(const mat of item.shirt.userData.materials){mat.transparent=on;mat.opacity=on?.18:1;mat.depthWrite=!on;}item.shirt.userData.meshes.forEach(m=>m.castShadow=!on);this.render();}
   queueRender(){if(this.textureFrame)return;this.textureFrame=requestAnimationFrame(()=>{this.textureFrame=null;this.render();});}
   render(){if(!this.disposed)this.renderer.render(this.scene,this.camera);}
   dispose(){

@@ -9,7 +9,6 @@ export const SmoothCursor: React.FC<SmoothCursorProps> = ({ children }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isHoveringConstruction, setIsHoveringConstruction] = useState(false);
   const [isHoveringCustomCursor, setIsHoveringCustomCursor] = useState(false);
-  const [isShirtDialogOpen, setIsShirtDialogOpen] = useState(false);
   const targetPosition = useRef({ x: 0, y: 0 });
   const animationFrameRef = useRef<number>();
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -35,11 +34,6 @@ export const SmoothCursor: React.FC<SmoothCursorProps> = ({ children }) => {
       if (!e.relatedTarget && e.target === document.documentElement) {
         setIsVisible(false);
       }
-    };
-
-    const handleShirtRailDialogChange = (event: Event) => {
-      const customEvent = event as CustomEvent<{ open?: boolean }>;
-      setIsShirtDialogOpen(Boolean(customEvent.detail?.open));
     };
 
     // Hide the global cursor where a component supplies its own pointer badge.
@@ -93,8 +87,6 @@ export const SmoothCursor: React.FC<SmoothCursorProps> = ({ children }) => {
     document.addEventListener('mouseout', handleMouseOut);
     document.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseleave', handleMouseLeaveCard);
-    document.addEventListener('shirt-rail-dialog-change', handleShirtRailDialogChange);
-
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseenter', handleMouseEnter);
@@ -102,16 +94,13 @@ export const SmoothCursor: React.FC<SmoothCursorProps> = ({ children }) => {
       document.removeEventListener('mouseout', handleMouseOut);
       document.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseleave', handleMouseLeaveCard);
-      document.removeEventListener('shirt-rail-dialog-change', handleShirtRailDialogChange);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
   }, [isVisible]);
 
-  const shouldHideCursor = isHoveringCustomCursor || isShirtDialogOpen;
-
-  if (shouldHideCursor) {
+  if (isHoveringCustomCursor) {
     return <>{children}</>;
   }
 
@@ -121,7 +110,7 @@ export const SmoothCursor: React.FC<SmoothCursorProps> = ({ children }) => {
       {/* Global cursor: crosshair or construction badge */}
       <div
         ref={cursorRef}
-        className={`fixed pointer-events-none z-[9999] ${isHoveringConstruction ? "" : "mix-blend-difference"}`}
+        className={`mobile-smooth-cursor fixed pointer-events-none z-[9999] ${isHoveringConstruction ? "" : "mix-blend-difference"}`}
         style={{
           left: cursorPosition.x,
           top: cursorPosition.y,

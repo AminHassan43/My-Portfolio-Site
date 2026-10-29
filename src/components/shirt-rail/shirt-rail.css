@@ -4,7 +4,20 @@
 .shirt-rail,.shirt-rail *{box-sizing:border-box}
 .shirt-rail button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 .shirt-rail button:focus-visible{outline:2px solid #353d39;outline-offset:5px}
-.shirt-rail .shirt-rail-position,.shirt-rail .shirt-rail-summary{display:none}
+
+/* Selection summary under the rack */
+.shirt-rail .shirt-rail-details{position:relative;display:flex;width:100%;margin:0;padding:8px 16px 0;align-items:center;justify-content:center;gap:14px}
+/* The details stay in layout while idle so the block, and the rack above it, never change height. */
+.shirt-rail .shirt-rail-idle{display:none;position:absolute;top:8px;left:0;right:0;margin:0;padding:0 16px;color:#4c5159;font-family:"Space Mono",monospace;font-size:var(--type-body,16px);font-weight:400;letter-spacing:-.02em;line-height:1.35;text-align:center}
+.shirt-rail .shirt-rail-details.is-idle .shirt-rail-idle{display:block}
+.shirt-rail .shirt-rail-details.is-idle .shirt-rail-logo,.shirt-rail .shirt-rail-details.is-idle .shirt-rail-details-text{visibility:hidden}
+.shirt-rail .shirt-rail-logo{display:block;flex:0 0 auto;width:48px;height:48px;max-width:none;object-fit:contain}
+.shirt-rail .shirt-rail-logo[hidden]{display:none}
+.shirt-rail .shirt-rail-details-text{min-width:0;text-align:left}
+.shirt-rail .shirt-rail-position{display:block;margin:0;color:#4c5159;font-family:"Space Mono",monospace;font-size:var(--type-detail,12px);font-weight:500;letter-spacing:.01em;line-height:1.4}
+.shirt-rail .shirt-rail-summary{display:flex;margin:0;flex-direction:column;align-items:flex-start;color:#4c5159;font-family:"Space Mono",monospace;font-size:var(--type-body,16px);font-weight:400;letter-spacing:-.02em;line-height:1.35}
+.shirt-rail .shirt-rail-summary-club{color:#20242a;font-weight:700}
+.shirt-rail .shirt-rail-summary-meta{display:block;margin-top:2px}
 
 /* Rack */
 .shirt-rail .rack-room{position:relative;margin:0;height:calc(var(--row-height)*2 + var(--row-gap))}
@@ -27,6 +40,7 @@
 .shirt-rail .rail{position:absolute;left:24px;right:24px;top:14px;height:6px;background:#9ca3a4;border-top:1px solid #c7cdce;border-bottom:1px solid #747c7d;z-index:0;mask-image:linear-gradient(to right,transparent,#000 72px,#000 calc(100% - 72px),transparent);-webkit-mask-image:linear-gradient(to right,transparent,#000 72px,#000 calc(100% - 72px),transparent)}
 .shirt-rail .rail i{position:absolute;width:10px;height:15px;top:-5px;left:-4px;background:#a3aaaa;border:1px solid #8d9696;border-radius:2px}
 .shirt-rail .rail i+i{left:auto;right:-4px}
+.shirt-rail .rack-rod{display:none}
 .shirt-rail.webgl-ready .rail{visibility:hidden}
 .shirt-rail .rack-strip{height:100%;width:100%;overflow-x:auto;overflow-y:visible;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;position:relative}
 .shirt-rail .rack-strip::-webkit-scrollbar{display:none}
@@ -38,41 +52,20 @@
 .shirt-rail .kit{position:absolute;left:0;top:0;width:var(--pitch);height:305px;padding:0;border:0;background:none;cursor:pointer;touch-action:pan-x;transform:translate3d(0,0,0);transform-origin:50% 16px}
 .shirt-rail .kit svg{position:absolute;left:0;top:0;width:124px;height:310px;overflow:visible;pointer-events:none}
 .shirt-rail .kit[aria-selected=true]{z-index:40}
-.shirt-rail .kit.is-lifted{opacity:.18}
 .shirt-rail .kit:focus-visible{outline-offset:2px;border-radius:2px}
 .shirt-rail .kit>.swing{display:block;position:absolute;left:calc(50% - 62px);top:0;width:124px;height:310px;transform-origin:62px 17.36px;pointer-events:none}
 .shirt-rail .hem{transform-origin:56px 130px}
 .shirt-rail .garment{display:block;position:absolute;inset:0}
 .shirt-rail .is-3d .kit>.swing{visibility:hidden}
 
-/* Detail dialog (rendered in the top layer, still styled through .shirt-rail) */
-.shirt-rail dialog{position:relative;margin:auto;width:calc(100% - 32px);max-width:680px;max-height:calc(100dvh - 32px);padding:0;overflow:auto;border:1px solid rgba(255,255,255,.55);border-radius:20px;background-color:rgba(255,255,255,.42);background-image:linear-gradient(160deg,rgba(255,255,255,.78) 0%,rgba(255,255,255,.58) 42%,rgba(244,246,255,.62) 100%);box-shadow:0 24px 70px rgba(18,18,18,.16),inset 0 1px 0 rgba(255,255,255,.85),inset 0 0 0 1px rgba(255,255,255,.28),inset 0 -18px 36px -22px rgba(120,130,160,.35);color:#121212;backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%)}
-.shirt-rail dialog::before{position:absolute;z-index:0;inset:0;background:radial-gradient(120% 80% at 6% -8%,rgba(255,255,255,.9) 0%,rgba(255,255,255,0) 58%);content:"";pointer-events:none}
-.shirt-rail dialog::backdrop{background:rgba(30,35,32,.43);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
-.shirt-rail .dialog-panel{position:relative;z-index:1;display:grid;grid-template-columns:1fr;min-height:0}
-.shirt-rail .close{position:absolute;z-index:10;top:12px;right:12px;width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:999px;background:rgba(255,255,255,.18);cursor:pointer!important;pointer-events:auto;isolation:isolate;transition:background-color 160ms ease,transform 160ms ease}
-.shirt-rail .close svg{width:23px;fill:none;stroke:currentColor;stroke-width:1.4}
-.shirt-rail dialog[open],.shirt-rail dialog[open] *{cursor:auto!important}
-.shirt-rail dialog[open] .close{cursor:pointer!important}
-.shirt-rail .dialog-logo-stage{display:grid;min-width:0;padding:62px 32px;place-items:center}
-.shirt-rail .dialog-logo{display:block;width:180px;max-width:100%;height:180px;object-fit:contain;object-position:center}
-.shirt-rail .dialog-logo[hidden],.shirt-rail .dialog-logo-fallback[hidden]{display:none}
-.shirt-rail .dialog-logo-fallback{display:grid;width:180px;max-width:100%;height:180px;place-items:center;color:#3f444c;font-family:"Fraunces",Georgia,serif;font-size:var(--type-header,40px);font-weight:400;letter-spacing:-.025em;text-align:center}
-.shirt-rail .dialog-copy{display:flex;min-width:0;padding:56px 52px 50px 16px;align-self:stretch;flex-direction:column;justify-content:center;font-family:"Space Mono",monospace}
-.shirt-rail .dialog-club{margin:0;font-family:"Fraunces",Georgia,serif;font-size:var(--type-header,40px);font-optical-sizing:auto;font-weight:400;letter-spacing:-.025em;line-height:1.05;overflow-wrap:anywhere}
-.shirt-rail .dialog-subtitle{display:none;margin:7px 0 0;color:#4c5159;font-family:"Space Mono",monospace;font-size:var(--type-detail,12px);font-weight:400;letter-spacing:-.02em;line-height:1.35;overflow-wrap:anywhere}
-.shirt-rail .dialog-meta{display:grid;width:100%;margin:28px 0 0;padding:0}
-.shirt-rail .dialog-meta>div{display:grid;padding:15px 0;align-items:baseline;grid-template-columns:86px minmax(0,1fr);gap:18px;border-top:1px solid rgba(18,18,18,.13)}
-.shirt-rail .dialog-meta>div:last-child{border-bottom:1px solid rgba(18,18,18,.13)}
-.shirt-rail .dialog-meta dt{color:#5f646d;font-size:var(--type-detail,12px);font-weight:700;letter-spacing:.15em;text-transform:uppercase}
-.shirt-rail .dialog-meta dd{min-width:0;margin:0;font-size:var(--type-body,16px);font-weight:400;letter-spacing:-.035em;line-height:1.4;text-align:right;overflow-wrap:anywhere}
-
 @media(min-width:900px){
   .shirt-rail{--pitch:min(calc((88vw - 124px) / var(--rack-cols,16)),52px);--row-height:335px;--row-gap:26px;--edge-gutter:62px}
   .shirt-rail .rack-room{height:calc(var(--row-height)*2 + var(--row-gap))}
   .shirt-rail .rack-strip{overflow:visible;scroll-snap-type:none}
   .shirt-rail .rack-track{padding:0;margin:0 auto}
-  .shirt-rail .dialog-panel{grid-template-columns:280px minmax(0,1fr);min-height:390px}
+  /* The bottom row's shirts end well above the rack room. This offset leaves the
+     same gap under them as between the two rows (about 33px before scaling). */
+  .shirt-rail .shirt-rail-details{position:relative;z-index:3;margin-top:-103px}
 }
 @media(max-width:899px){
   .shirt-rail{
@@ -94,9 +87,12 @@
   }
   .shirt-rail .rack-strip{
     overflow-x:auto;
-    overflow-y:visible;
+    overflow-y:hidden;
+    overflow-y:clip;
     scroll-snap-type:none;
     scroll-padding-inline:var(--edge-gutter);
+    touch-action:pan-x pan-y;
+    overscroll-behavior-x:contain;
   }
   .shirt-rail .rack-track{
     width:max-content;
@@ -113,18 +109,23 @@
   .shirt-rail .rack-row:first-of-type{padding-left:var(--edge-gutter)}
   .shirt-rail .rack-row:last-of-type{padding-right:var(--edge-gutter)}
   .shirt-rail .rack-row+.rack-row{margin-top:0}
-  .shirt-rail .rail{
-    left:-24px;
-    right:auto;
-    width:calc(200% + 48px);
-    mask-image:none;
-    -webkit-mask-image:none;
+  /* The rod sits outside the scroller so it always spans the full width. */
+  .shirt-rail .rail{display:none}
+  .shirt-rail .rack-rod{
+    display:block;
+    position:absolute;
+    z-index:0;
+    top:calc(32px - var(--rod-size)/2);
+    left:0;
+    right:0;
+    --rod-size:7px;
+    height:var(--rod-size);
+    background:linear-gradient(to bottom,#596261 0%,#aeb5b4 22%,#848d8c 45%,#626b6a 75%,#3f4646 100%);
+    pointer-events:none;
   }
-  .shirt-rail .rack-row:first-of-type .rail{display:block}
-  .shirt-rail .rack-row:not(:first-of-type) .rail{display:none}
-  .shirt-rail .rail i{display:none}
   .shirt-rail .kit{
     height:var(--row-height);
+    touch-action:pan-x pan-y;
   }
   .shirt-rail .kit svg{
     width:var(--kit-width);
@@ -136,71 +137,11 @@
     height:var(--row-height);
     transform-origin:var(--kit-half-width) var(--kit-pivot-y);
   }
-  .shirt-rail .shirt-rail-position{
-    display:block;
-    width:100%;
-    min-height:32px;
-    margin:0;
-    padding-top:8px;
-    color:#4c5159;
-    font-family:"Space Mono",monospace;
-    font-size:var(--type-detail,12px);
-    font-weight:500;
-    letter-spacing:.01em;
-    line-height:1.4;
-    text-align:center;
-  }
-  .shirt-rail .shirt-rail-summary{
-    display:flex;
-    width:100%;
-    min-height:32px;
-    margin:0;
-    padding:0 16px;
-    align-items:center;
-    flex-direction:column;
-    color:#4c5159;
-    font-family:"Space Mono",monospace;
-    font-size:var(--type-body,16px);
-    font-weight:400;
-    letter-spacing:-.02em;
-    line-height:1.35;
-    text-align:center;
-  }
-  .shirt-rail .shirt-rail-summary-club{
-    color:#20242a;
-    font-weight:700;
-  }
-  .shirt-rail .shirt-rail-summary-meta{
-    display:block;
-    margin-top:2px;
-  }
   .shirt-rail .kit,
   .shirt-rail .rack-strip,
   .shirt-rail button{
     cursor:none !important;
   }
-  .shirt-rail dialog{width:calc(100% - 28px)}
-  .shirt-rail .dialog-panel{
-    grid-template-columns:minmax(76px,30%) minmax(0,1fr);
-    min-height:128px;
-    align-items:center;
-  }
-  .shirt-rail .dialog-logo-stage{padding:20px 8px 20px 20px}
-  .shirt-rail .dialog-logo,.shirt-rail .dialog-logo-fallback{
-    width:clamp(64px,22vw,92px);
-    height:clamp(64px,22vw,92px);
-  }
-  .shirt-rail .dialog-copy{
-    padding:20px 20px 20px 8px;
-    align-items:flex-start;
-    justify-content:center;
-    text-align:left;
-  }
-  .shirt-rail .dialog-club{font-size:var(--type-body,16px)}
-  .shirt-rail .dialog-subtitle{display:block;margin-top:6px;font-size:var(--type-detail,12px)}
 }
-@media(hover:hover){.shirt-rail .close:hover{background:rgba(255,255,255,.62);transform:scale(1.04)}}
-@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.shirt-rail dialog{background-color:rgba(255,255,255,.96)}}
-@media(prefers-reduced-transparency:reduce){.shirt-rail dialog{border-color:rgba(18,18,18,.13);background-color:#fff;background-image:none;box-shadow:0 24px 70px rgba(18,18,18,.16);backdrop-filter:none;-webkit-backdrop-filter:none}.shirt-rail dialog::before{display:none}.shirt-rail dialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}}
 @media(prefers-reduced-motion:reduce){.shirt-rail .kit,.shirt-rail .swing,.shirt-rail .hem{transition:transform 120ms ease,opacity 120ms ease}.shirt-rail .rack-loader-pattern{animation:none}.shirt-rail .rack-strip,.shirt-rail .rack-loader{transition:opacity 120ms linear}}
 @media(scripting:none){.shirt-rail.is-loading .rack-strip{opacity:1;pointer-events:auto}.shirt-rail .rack-loader{display:none}}

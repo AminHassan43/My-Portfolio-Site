@@ -354,6 +354,16 @@
 }
 
 @media (max-width: 899px) {
+  html,
+  body,
+  body * {
+    cursor: none !important;
+  }
+
+  .mobile-smooth-cursor {
+    display: none !important;
+  }
+
   .header-background {
     height: clamp(1100px, 140svh, 1400px) !important;
   }

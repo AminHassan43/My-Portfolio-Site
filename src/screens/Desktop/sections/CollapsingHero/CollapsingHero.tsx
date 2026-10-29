@@ -20,9 +20,35 @@ const EMAIL_ADDRESS = "a26hassa@uwaterloo.ca";
 const RESUME_URL =
   "https://drive.google.com/file/d/1QsDZyWoQ18tmAgMGORpeoHjVCr_qjjxQ/view?usp=sharing";
 
+// The hook crowns sit 0.067 world units above a rail drawn 32px below the
+// row top, at 86px per unit (see rack-3d.js and shirt-model.js).
+const RACK_HOOK_TOP_PX = 32 - 0.067 * 86;
+
+// Top of the rendered glyphs, not the line box, so the name's leading and
+// the font's ascender space don't count as visible height.
+const inkTop = (element: HTMLElement) => {
+  const rect = element.getBoundingClientRect();
+  const style = window.getComputedStyle(element);
+  const context = document.createElement("canvas").getContext("2d");
+  if (!context) {
+    return rect.top;
+  }
+  context.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+  let text = element.textContent?.trim() ?? "";
+  if (style.textTransform === "lowercase") text = text.toLowerCase();
+  else if (style.textTransform === "uppercase") text = text.toUpperCase();
+  const metrics = context.measureText(text);
+  const contentHeight =
+    metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+  const lineHeight = parseFloat(style.lineHeight) || contentHeight;
+  const baseline =
+    rect.top + (lineHeight - contentHeight) / 2 + metrics.fontBoundingBoxAscent;
+  return baseline - metrics.actualBoundingBoxAscent;
+};
+
 const KitCollectionHint = () => (
   <p className="collapsing-hero-kit-hint">
-    check out my football kit collection! click on any to learn more :)
+    check out my football kit collection! hover over any to learn more :)
   </p>
 );
 
@@ -257,12 +283,12 @@ export const CollapsingHero = ({
         return;
       }
 
-      const name = root.querySelector(".collapsing-hero-name-heading");
-      const rackTopEl =
-        root.querySelector(".shirt-rail .kit") ||
-        root.querySelector(".shirt-rail .rack-room");
+      const name =
+        root.querySelector<HTMLElement>(".collapsing-hero-name-text > span") ||
+        root.querySelector<HTMLElement>(".collapsing-hero-name-heading");
+      const kit = root.querySelector<HTMLElement>(".shirt-rail .kit");
 
-      if (!name || !rackTopEl) {
+      if (!name || !kit) {
         if (attempts < 40) {
           attempts += 1;
           frame = window.requestAnimationFrame(alignRack);
@@ -270,9 +296,12 @@ export const CollapsingHero = ({
         return;
       }
 
+      const kitRect = kit.getBoundingClientRect();
+      const kitScale = kit.offsetHeight ? kitRect.height / kit.offsetHeight : 1;
       const drift =
-        rackTopEl.getBoundingClientRect().top -
-        name.getBoundingClientRect().top;
+        kitRect.top +
+        RACK_HOOK_TOP_PX * kitScale -
+        inkTop(name);
 
       if (Math.abs(drift) < 0.5) {
         return;
